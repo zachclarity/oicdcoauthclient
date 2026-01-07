@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Silent Renew</title>
+</head>
+<body>
+    <script>
+        // This page is used for silent token renewal
+        // The OIDC library will handle the token exchange
+        window.parent.postMessage(window.location.href, window.location.origin);
+    </script>
+</body>
+</html>
