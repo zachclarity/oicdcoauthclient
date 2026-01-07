@@ -53,52 +53,46 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Disable CSRF for stateless API
-            .csrf(AbstractHttpConfigurer::disable)
-            
-            // Configure CORS
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            
-            // Stateless session management
-            .sessionManagement(session -> 
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            
-            // Authorization rules
-            .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
-                .requestMatchers("/error").permitAll()
-                
-                // Admin endpoints require ADMIN role (from group or realm/client roles)
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                
-                // Hello endpoint requires ADMIN role
-                .requestMatchers("/api/hello/**").hasRole("ADMIN")
-                
-                // All other API endpoints require authentication
-                .requestMatchers("/api/**").authenticated()
-                
-                // Any other request requires authentication
-                .anyRequest().authenticated()
-            )
-            
-            // Configure exception handling with custom entry point
-            // This redirects anonymous users to Keycloak login
-            .exceptionHandling(exceptions -> exceptions
-                .authenticationEntryPoint(keycloakAuthenticationEntryPoint)
-                .accessDeniedHandler(keycloakAccessDeniedHandler)
-            )
-            
-            // Configure OAuth2 Resource Server with JWT
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt
-                    .jwtAuthenticationConverter(keycloakJwtAuthenticationConverter)
-                )
-                // Also use the custom entry point for OAuth2 auth failures
-                .authenticationEntryPoint(keycloakAuthenticationEntryPoint)
-            );
+                // Disable CSRF for stateless API
+                .csrf(AbstractHttpConfigurer::disable)
+
+                // Configure CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // Stateless session management
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // Authorization rules
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/error").permitAll()
+
+                        // Admin endpoints require ADMIN role (from group or realm/client roles)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // Hello endpoint requires ADMIN role
+                        .requestMatchers("/api/hello/**").hasRole("ADMIN")
+
+                        // All other API endpoints require authentication
+                        .requestMatchers("/api/**").authenticated()
+
+                        // Any other request requires authentication
+                        .anyRequest().authenticated())
+
+                // Configure exception handling with custom entry point
+                // This redirects anonymous users to Keycloak login
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(keycloakAuthenticationEntryPoint)
+                        .accessDeniedHandler(keycloakAccessDeniedHandler))
+
+                // Configure OAuth2 Resource Server with JWT
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(keycloakJwtAuthenticationConverter))
+                        // Also use the custom entry point for OAuth2 auth failures
+                        .authenticationEntryPoint(keycloakAuthenticationEntryPoint));
 
         return http.build();
     }
@@ -106,34 +100,37 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
+
         // Split the allowed origins string and set them
-        List<String> origins = Arrays.asList(allowedOrigins.split(","));
-        configuration.setAllowedOrigins(origins);
-        
+       // List<String> origins = Arrays.asList(allowedOrigins.split(","));
+       // configuration.setAllowedOrigins(origins);
+
         // Allow common HTTP methods
         configuration.setAllowedMethods(Arrays.asList(
-            "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
-        ));
-        
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
         // Allow common headers including Authorization for Bearer tokens
         configuration.setAllowedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Type",
-            "Accept",
-            "Origin",
-            "X-Requested-With"
-        ));
-        
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Requested-With"));
+
         // Expose headers that the client might need
         configuration.setExposedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Disposition"
-        ));
-        
+                "Authorization",
+                "Content-Disposition"));
+
+        configuration.setAllowedOrigins(
+                Arrays.asList("http://localhost:7372","http://192.168.1.30:7372","http://192.168.1.30:8080","http://192.168.1.30:8180", "http://192.168.1.30:7371", "http://localhost:7371", "http://localhost:8180"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        configuration.setAllowCredentials(true); // Required for Keycloak cookies/sessions
+
         // Allow credentials (cookies, authorization headers)
         configuration.setAllowCredentials(true);
-        
+
         // Cache preflight requests for 1 hour
         configuration.setMaxAge(3600L);
 

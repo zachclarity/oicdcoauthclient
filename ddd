@@ -1,0 +1,5 @@
+echo hostname-strict=false >> keycloak.conf
+echo hostname-strict-https=false >> keycloak.conf
+echo http-enabled=true >> keycloak.conf
+
+UPDATE public.realm set ssl_required = 'NONE'

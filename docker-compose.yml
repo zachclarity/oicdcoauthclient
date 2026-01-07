@@ -5,39 +5,50 @@ services:
     image: quay.io/keycloak/keycloak:23.0
     container_name: keycloak
     environment:
+      # Database Configuration
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres:5432/keycloak
+      - KC_DB_USERNAME=postgres
+      - KC_DB_PASSWORD=postgres
+      # Admin Credentials
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+      # HTTP & Security Settings
       - KC_HTTP_ENABLED=true
       - KC_HOSTNAME_STRICT_HTTPS=false
       - KC_HOSTNAME_STRICT=false
+      - KC_HEALTH_ENABLED=true
     ports:
       - "8180:8080"
     command:
       - start-dev
     networks:
       - keycloak-network
+    depends_on:
+      - postgres
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 && echo -e \"GET /health/live HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" >&3 && cat <&3 | grep -q \"200 OK\""]
       interval: 30s
       timeout: 10s
       retries: 5
 
-  # Optional: PostgreSQL for production use
-  # postgres:
-  #   image: postgres:15
-  #   container_name: keycloak-db
-  #   environment:
-  #     - POSTGRES_DB=keycloak
-  #     - POSTGRES_USER=keycloak
-  #     - POSTGRES_PASSWORD=keycloak
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   networks:
-  #     - keycloak-network
+  postgres:
+    image: postgres:16
+    container_name: keycloak-db
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - keycloak-network
 
 networks:
   keycloak-network:
     driver: bridge
 
-# volumes:
-#   postgres_data:
+volumes:
+  postgres_data:
