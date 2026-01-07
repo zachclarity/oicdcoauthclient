@@ -18,6 +18,19 @@ spring.security.oauth2.resourceserver:
     # JWK Set URI for JWT validation (usually auto-discovered from issuer-uri)
     # jwk-set-uri: ${KEYCLOAK_JWK_URI:http://localhost:8180/realms/demo/protocol/openid-connect/certs}
 
+# Keycloak Configuration for Login Redirect
+keycloak:
+  # Base URL of Keycloak server (without /realms/...)
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8180}
+  # Realm name
+  realm: ${KEYCLOAK_REALM:demo}
+  # Client ID (public client used by frontend)
+  client-id: ${KEYCLOAK_CLIENT_ID:react-client}
+  # Default redirect URI after login (frontend callback URL)
+  redirect-uri: ${KEYCLOAK_REDIRECT_URI:http://localhost:3000/callback}
+  # Enable/disable redirect to Keycloak (set to false to always return 401)
+  enable-redirect: ${KEYCLOAK_ENABLE_REDIRECT:true}
+
 # CORS Configuration
 app:
   cors:

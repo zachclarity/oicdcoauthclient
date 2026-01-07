@@ -204,6 +204,32 @@ For React Native / iOS apps, you can use the same OIDC configuration with librar
 
 ## Security Features
 
+### Login Redirect for Anonymous Users
+When an unauthenticated user accesses a protected endpoint:
+
+| Client Type | Behavior |
+|-------------|----------|
+| Browser (Accept: text/html) | Redirects to Keycloak login page |
+| API Client (Accept: application/json) | Returns 401 JSON with login_url |
+| AJAX (X-Requested-With: XMLHttpRequest) | Returns 401 JSON with login_url |
+
+**Example 401 Response for API clients:**
+```json
+{
+  "error": "unauthorized",
+  "message": "Authentication required",
+  "login_url": "http://localhost:8180/realms/demo/protocol/openid-connect/auth?...",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+**Configuration Options:**
+```yaml
+keycloak:
+  enable-redirect: true  # Set to false to always return 401
+  redirect-uri: http://localhost:3000/callback
+```
+
 ### JWT Token Validation
 - Tokens are validated against Keycloak's public key (JWKS)
 - Issuer, audience, and expiration are verified

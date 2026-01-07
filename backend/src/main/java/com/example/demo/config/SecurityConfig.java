@@ -1,5 +1,7 @@
 package com.example.demo.config;
 
+import com.example.demo.security.KeycloakAccessDeniedHandler;
+import com.example.demo.security.KeycloakAuthenticationEntryPoint;
 import com.example.demo.security.KeycloakJwtAuthenticationConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,12 @@ import java.util.List;
 /**
  * Security configuration for OAuth2 Resource Server with Keycloak.
  * Configures JWT validation, CORS, and endpoint security.
+ * 
+ * Features:
+ * - Redirects anonymous browser requests to Keycloak login
+ * - Returns 401 JSON for API clients (detected via Accept header)
+ * - Validates JWT tokens against Keycloak
+ * - Extracts roles from groups, realm_access, and resource_access
  */
 @Configuration
 @EnableWebSecurity
@@ -27,12 +35,19 @@ import java.util.List;
 public class SecurityConfig {
 
     private final KeycloakJwtAuthenticationConverter keycloakJwtAuthenticationConverter;
+    private final KeycloakAuthenticationEntryPoint keycloakAuthenticationEntryPoint;
+    private final KeycloakAccessDeniedHandler keycloakAccessDeniedHandler;
 
     @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:5173}")
     private String allowedOrigins;
 
-    public SecurityConfig(KeycloakJwtAuthenticationConverter keycloakJwtAuthenticationConverter) {
+    public SecurityConfig(
+            KeycloakJwtAuthenticationConverter keycloakJwtAuthenticationConverter,
+            KeycloakAuthenticationEntryPoint keycloakAuthenticationEntryPoint,
+            KeycloakAccessDeniedHandler keycloakAccessDeniedHandler) {
         this.keycloakJwtAuthenticationConverter = keycloakJwtAuthenticationConverter;
+        this.keycloakAuthenticationEntryPoint = keycloakAuthenticationEntryPoint;
+        this.keycloakAccessDeniedHandler = keycloakAccessDeniedHandler;
     }
 
     @Bean
@@ -69,11 +84,20 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             
+            // Configure exception handling with custom entry point
+            // This redirects anonymous users to Keycloak login
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(keycloakAuthenticationEntryPoint)
+                .accessDeniedHandler(keycloakAccessDeniedHandler)
+            )
+            
             // Configure OAuth2 Resource Server with JWT
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt
                     .jwtAuthenticationConverter(keycloakJwtAuthenticationConverter)
                 )
+                // Also use the custom entry point for OAuth2 auth failures
+                .authenticationEntryPoint(keycloakAuthenticationEntryPoint)
             );
 
         return http.build();
