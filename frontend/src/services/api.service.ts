@@ -8,7 +8,7 @@ import { API_BASE_URL } from '../config/auth.config';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: 'http://192.168.1.30:7371',
   headers: {
     'Content-Type': 'application/json',
   },
