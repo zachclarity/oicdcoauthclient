@@ -7,6 +7,9 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HTTP_ENABLED=true
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HOSTNAME_STRICT=false
     ports:
       - "8180:8080"
     command:
