@@ -25,7 +25,7 @@ import java.util.Base64;
 @Component
 public class KeycloakAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    @Value("${keycloak.auth-server-url:http://localhost:8180}")
+    @Value("${keycloak.auth-server-url:http://192.168.1.30:8180}")
     private String keycloakBaseUrl;
 
     @Value("${keycloak.realm:demo}")
@@ -34,7 +34,7 @@ public class KeycloakAuthenticationEntryPoint implements AuthenticationEntryPoin
     @Value("${keycloak.client-id:react-client}")
     private String clientId;
 
-    @Value("${keycloak.redirect-uri:http://localhost:3000/callback}")
+    @Value("${keycloak.redirect-uri:http://192.168.1.30:7371/callback}")
     private String defaultRedirectUri;
 
     @Value("${keycloak.enable-redirect:true}")

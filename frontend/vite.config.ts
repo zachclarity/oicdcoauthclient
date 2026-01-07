@@ -8,14 +8,14 @@ export default defineConfig({
     proxy: {
       // Directs any call starting with /api to your Java server
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://192.168.1.30:8080',
         changeOrigin: true,
         // If your Java API doesn't have /api in the actual URL, 
         // rewrite it: rewrite: (path) => path.replace(/^\/api/, '')
       },
       // Directs Keycloak auth calls to your Keycloak server
       '/auth': {
-        target: 'http://localhost:8180',
+        target: 'http://192.168.1.30:8180',
         changeOrigin: true,
       }
     },

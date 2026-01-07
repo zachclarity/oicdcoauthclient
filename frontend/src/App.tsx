@@ -147,10 +147,10 @@ function App() {
                   <span>🖥️</span> Backend: http://localhost:8080
                 </li>
                 <li style={styles.infoItem}>
-                  <span>🌐</span> Frontend: http://localhost:3000
+                  <span>🌐</span> Frontend: http://192.168.1.30:7371
                 </li>
                 <li style={styles.infoItem}>
-                  <span>🔑</span> Keycloak: http://localhost:8180
+                  <span>🔑</span> Keycloak: http://192.168.1.30:8180
                 </li>
               </ul>
             </div>

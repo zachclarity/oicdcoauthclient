@@ -55,7 +55,7 @@ docker run -d \
 
 ### 2. Configure Keycloak
 
-Access Keycloak Admin Console at http://localhost:8180 (admin/admin)
+Access Keycloak Admin Console at http://192.168.1.30:8180 (admin/admin)
 
 #### Create Realm
 1. Click "Create Realm"
@@ -70,10 +70,10 @@ Access Keycloak Admin Console at http://localhost:8180 (admin/admin)
 5. Client authentication: `OFF` (public client for SPA)
 6. Authorization: `OFF`
 7. Click "Next"
-8. Root URL: `http://localhost:3000`
-9. Valid redirect URIs: `http://localhost:3000/*`
-10. Valid post logout redirect URIs: `http://localhost:3000/*`
-11. Web origins: `http://localhost:3000`
+8. Root URL: `http://192.168.1.30:7371`
+9. Valid redirect URIs: `http://192.168.1.30:7371/*`
+10. Valid post logout redirect URIs: `http://192.168.1.30:7371/*`
+11. Web origins: `http://192.168.1.30:7371`
 12. Click "Save"
 
 #### Configure Client Scopes (for groups)
@@ -120,8 +120,8 @@ Access Keycloak Admin Console at http://localhost:8180 (admin/admin)
 ```bash
 cd backend
 
-# Set environment variables (optional, defaults to localhost:8180)
-export KEYCLOAK_ISSUER_URI=http://localhost:8180/realms/demo
+# Set environment variables (optional, defaults to 192.168.1.30:8180)
+export KEYCLOAK_ISSUER_URI=http://192.168.1.30:8180/realms/demo
 
 # Run with Maven
 ./mvnw spring-boot:run
@@ -141,11 +141,11 @@ npm install
 npm run dev
 ```
 
-The app will be available at http://localhost:3000
+The app will be available at http://192.168.1.30:7371
 
 ### 5. Test the Application
 
-1. Open http://localhost:3000
+1. Open http://192.168.1.30:7371
 2. Click "Login with Keycloak"
 3. Login with `testadmin` / `password`
 4. Click the API buttons to test protected endpoints
@@ -170,17 +170,17 @@ The app will be available at http://localhost:3000
 ```yaml
 spring.security.oauth2.resourceserver:
   jwt:
-    issuer-uri: http://localhost:8180/realms/demo
+    issuer-uri: http://192.168.1.30:8180/realms/demo
 
 app:
   cors:
-    allowed-origins: http://localhost:3000,http://localhost:5173
+    allowed-origins: http://192.168.1.30:7371,http://localhost:5173
 ```
 
 ### Frontend (.env)
 
 ```env
-VITE_KEYCLOAK_URL=http://localhost:8180
+VITE_KEYCLOAK_URL=http://192.168.1.30:8180
 VITE_KEYCLOAK_REALM=demo
 VITE_KEYCLOAK_CLIENT_ID=react-client
 VITE_API_URL=http://localhost:8080
@@ -218,7 +218,7 @@ When an unauthenticated user accesses a protected endpoint:
 {
   "error": "unauthorized",
   "message": "Authentication required",
-  "login_url": "http://localhost:8180/realms/demo/protocol/openid-connect/auth?...",
+  "login_url": "http://192.168.1.30:8180/realms/demo/protocol/openid-connect/auth?...",
   "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
@@ -227,7 +227,7 @@ When an unauthenticated user accesses a protected endpoint:
 ```yaml
 keycloak:
   enable-redirect: true  # Set to false to always return 401
-  redirect-uri: http://localhost:3000/callback
+  redirect-uri: http://192.168.1.30:7371/callback
 ```
 
 ### JWT Token Validation

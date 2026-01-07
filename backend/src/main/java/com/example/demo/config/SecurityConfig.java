@@ -38,7 +38,7 @@ public class SecurityConfig {
     private final KeycloakAuthenticationEntryPoint keycloakAuthenticationEntryPoint;
     private final KeycloakAccessDeniedHandler keycloakAccessDeniedHandler;
 
-    @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:5173}")
+    @Value("${app.cors.allowed-origins:http://192.168.1.30:7371,http://localhost:5173}")
     private String allowedOrigins;
 
     public SecurityConfig(
@@ -123,7 +123,7 @@ public class SecurityConfig {
                 "Content-Disposition"));
 
         configuration.setAllowedOrigins(
-                Arrays.asList("http://localhost:7372","http://192.168.1.30:7372","http://192.168.1.30:8080","http://192.168.1.30:8180", "http://192.168.1.30:7371", "http://localhost:7371", "http://localhost:8180"));
+                Arrays.asList("http://localhost:7372","http://192.168.1.30:7372","http://192.168.1.30:8080","http://192.168.1.30:8180", "http://192.168.1.30:7371", "http://localhost:7371", "http://192.168.1.30:8180"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true); // Required for Keycloak cookies/sessions
